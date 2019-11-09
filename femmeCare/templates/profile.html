@@ -3,16 +3,21 @@
 {% extends "base.html" %}
 
 {% block content %}
+<a href="{{ url_for('main.payment') }}"><button>Simulate Payment</button></a>
+{% if payment %}
+<p>You spent ${{payment.price}} on {{payment.category}}.</p>
+{% endif %}
 <h1 class="title">
   Welcome, {{name}}!
 </h1>
-<h2>Total Donated: {{total}}</h2>
+<h2>Total Donated: ${{total}}</h2>
+<h2>Current Nonprofit: {{nonprofit}}</h2>
 <h2>Organizations you have donated to: </h2>
 <ul>
 {% for org in orgs %}
 <li>{{org.name}}</li>
 {% endfor %}
 </ul>
-<button>See donation breakdown by nonprofit here.</button>
+<a href="{{ url_for('main.breakdown') }}"><button>See donation breakdown by nonprofit here.</button></a>
 <a href="{{ url_for('main.nonprofit') }}"><button>Change your current nonprofit donation organization here.</button></a>
 {% endblock %}

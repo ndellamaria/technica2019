@@ -1,0 +1,23 @@
+<!-- templates/breakdown.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Welcome, {{name}}!
+</h1>
+<h2>Total Donated: {{total}}</h2>
+<h2>Organizations you have donated to: </h2>
+<table>
+	<tr>
+    <th>Nonprofit</th>
+    <th>Amount</th> 
+  </tr>
+  {% for org in orgs %}
+	<tr>
+		<td>{{ org.name }}</td>
+		<td>{{ org.amt }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% endblock %}
