@@ -15,3 +15,13 @@ def index():
 def profile():
     return render_template('profile.html', name=current_user.name)
 
+@main.route('/nonprofit')
+@login_required
+def nonprofit():
+	return render_template('nonprofit.html')
+
+@main.route('/nonprofit', methods=['POST'])
+@login_required
+def nonprofit_post():
+	nonprofit = request.form.get('nonprofit')
+
