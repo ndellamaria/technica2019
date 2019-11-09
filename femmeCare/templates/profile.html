@@ -6,4 +6,13 @@
 <h1 class="title">
   Welcome, {{name}}!
 </h1>
+<h2>Total Donated: {{total}}</h2>
+<h2>Organizations you have donated to: </h2>
+<ul>
+{% for org in orgs %}
+<li>{{org.name}}</li>
+{% endfor %}
+</ul>
+<button>See donation breakdown by nonprofit here.</button>
+<a href="{{ url_for('main.nonprofit') }}"><button>Change your current nonprofit donation organization here.</button></a>
 {% endblock %}

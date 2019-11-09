@@ -11,3 +11,12 @@ class User(UserMixin, db.Model):
     bank = db.Column(db.String(100))
     routing = db.Column(db.String(100))
     nonprofit = db.Column(db.String(100))
+    total=db.Column(db.Float)
+
+class Transaction(db.Model):
+	id = db.Column(db.Integer,  primary_key=True)
+	name = db.Column(db.String(100))
+	user_id = db.Column(db.Integer)
+	amt = db.Column(db.Float)
+
+
