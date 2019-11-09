@@ -4,9 +4,12 @@
 
 {% block content %}
 <h1 class="title">
-  Flask Login Example
+  FemmeCare
 </h1>
 <h2 class="subtitle">
-  Easy authentication and authorization in Flask.
+  Some empowering statement about donating to feminist nonprofits.
 </h2>
+<a href="{{ url_for('auth.signup') }}" class="button is-block is-info is-large is-fullwidth">Sign Up</a>
+<p>Already signed up?</p>
+<a href="{{ url_for('auth.login') }}" class="button is-block is-info is-large is-fullwidth">Login</a>
 {% endblock %}

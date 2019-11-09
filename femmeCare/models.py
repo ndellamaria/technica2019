@@ -8,4 +8,6 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     account = db.Column(db.String(100))
+    bank = db.Column(db.String(100))
+    routing = db.Column(db.String(100))
     nonprofit = db.Column(db.String(100))

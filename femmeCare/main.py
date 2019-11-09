@@ -1,6 +1,6 @@
 # main.py
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, request, url_for
 from flask_login import login_required, current_user
 from . import db
 
@@ -24,4 +24,10 @@ def nonprofit():
 @login_required
 def nonprofit_post():
 	nonprofit = request.form.get('nonprofit')
+
+	user = current_user
+	user.nonprofit = nonprofit
+	db.session.commit()
+
+	return redirect(url_for('main.profile'))
 

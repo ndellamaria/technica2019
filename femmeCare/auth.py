@@ -2,7 +2,7 @@
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
 from . import db
 
@@ -23,12 +23,16 @@ def logout():
 	logout_user()
 	return redirect(url_for('main.index'))	
 
+@auth.route('/account')
+@login_required
+def account():
+	return render_template('account.html')
+
 @auth.route('/signup', methods=['POST'])
 def signup_post():
 	email = request.form.get('email')
 	name = request.form.get('name')
 	password = request.form.get('password')
-	account = request.form.get('account')
 	remember = True if request.form.get('remember') else False
 
 	user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
@@ -38,13 +42,13 @@ def signup_post():
 		return redirect(url_for('auth.signup'))
 
 	# create new user with the form data. Hash the password so plaintext version isn't saved.
-	new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), account=account)
+	new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
 
 	# add the new user to the database
 	db.session.add(new_user)
 	db.session.commit()
 	login_user(new_user,remember=remember)
-	return redirect(url_for('main.nonprofit'))
+	return redirect(url_for('auth.account'))
 
 @auth.route('/login', methods=['POST'])
 def login_post():
@@ -63,3 +67,20 @@ def login_post():
 	# if the above check passes, then we know the user has the right credentials
 	login_user(user,remember=remember)
 	return redirect(url_for('main.profile'))
+
+@auth.route('/account', methods=['POST'])
+@login_required
+def account_post():
+	bank = request.form.get('bank')
+	account = request.form.get('accountNumber')
+	routing = request.form.get('routingNumber')
+
+	user = current_user
+	user.bank = bank
+	user.account = account
+	user.routing = routing
+	user.total = 0
+
+	db.session.commit()
+
+	return redirect(url_for('main.nonprofit'))
