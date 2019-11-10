@@ -1,1 +1,1 @@
-web: gunicorn __init__.py:app --log-file=-
+web: gunicorn femmeCare:app --log-file=-
