@@ -1,0 +1,1 @@
+web: gunicorn femmeCare:app --log-file=-

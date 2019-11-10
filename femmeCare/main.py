@@ -6,6 +6,15 @@ from .models import User, Transaction
 from . import db
 import random
 import math
+import requests, json
+from twilio.rest import Client
+
+
+# Your Account Sid and Auth Token from twilio.com/console
+# DANGER! This is insecure. See http://twil.io/secure
+account_sid = 'ACf8bfffde572fef5f2ae637c57121f1d7'
+auth_token = '8627827f9a25d9060135c96db81682b2'
+client = Client(account_sid, auth_token)
 
 main = Blueprint('main', __name__)
 
@@ -20,6 +29,8 @@ def profile():
 	name = current_user.name
 	nonprofit = current_user.nonprofit
 	orgs = Transaction.query.filter_by(user_id=current_user.id).all()
+	for org in orgs:
+		org.amt = round(org.amt,3)
 	if 'category' in request.args and 'price' in request.args:
 		payment = {
 		'category': request.args['category'],
@@ -37,6 +48,8 @@ def breakdown():
 	name = current_user.name
 	nonprofit = current_user.nonprofit
 	orgs = Transaction.query.filter_by(user_id=current_user.id).all()
+	for org in orgs:
+		org.amt = round(org.amt,2)
 	# orgs = Transaction.query.all()
 	return render_template('breakdown.html', total=round(total,2), name=name, orgs=orgs, nonprofit=nonprofit)
 
@@ -67,13 +80,38 @@ def nonprofit_post():
 @main.route('/payment')
 @login_required
 def payment():
+	customerId = '5dc6e77d322fa016762f363b'
+	apiKey = 'abc1862bfa0f24f50280fc2bdc4231c7'
+
+	url = 'http://api.reimaginebanking.com/accounts/{}/purchases?key={}'.format(customerId,apiKey)
 	categories = ['Food', 'Entertainment', 'Clothes', 'Home Improvement', 'Books', 'School Supplies', 'Camping Gear']
 	price = round(random.uniform(10,100), 2)
 	diff = float(math.ceil(price)-price)
 	user = current_user
 	transaction = Transaction.query.filter_by(name=user.nonprofit, user_id=user.id).first()
-	transaction.amt+=diff
+	transaction.amt+=round(diff,2)
 	user.total+=diff
 	db.session.commit()
 	category = random.choice(categories)
+
+	payload = {
+	  "merchant_id": "string",
+	  "medium": "balance",
+	  "purchase_date": "2019-11-10",
+	  "amount": price,
+	  "status": "pending",
+	  "description": category,
+	}
+	response = requests.post( 
+	url, 
+	data=json.dumps(payload),
+	headers={'content-type':'application/json'},
+	)
+	text = 'Thank you for your $' + str(round(diff,2)) + ' donation to '+ user.nonprofit +'.'
+	message = client.messages.create(
+                              body=text,
+                              from_='+14158002916',
+                              to='+13472720992'
+                          )
+
 	return redirect(url_for('main.profile', category=category, price=price))
