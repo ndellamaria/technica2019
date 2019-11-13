@@ -12,8 +12,7 @@ from twilio.rest import Client
 
 # Your Account Sid and Auth Token from twilio.com/console
 # DANGER! This is insecure. See http://twil.io/secure
-account_sid = 'ACf8bfffde572fef5f2ae637c57121f1d7'
-auth_token = '8627827f9a25d9060135c96db81682b2'
+
 client = Client(account_sid, auth_token)
 
 main = Blueprint('main', __name__)
@@ -80,8 +79,7 @@ def nonprofit_post():
 @main.route('/payment')
 @login_required
 def payment():
-	customerId = '5dc6e77d322fa016762f363b'
-	apiKey = 'abc1862bfa0f24f50280fc2bdc4231c7'
+	
 
 	url = 'http://api.reimaginebanking.com/accounts/{}/purchases?key={}'.format(customerId,apiKey)
 	categories = ['Food', 'Entertainment', 'Clothes', 'Home Improvement', 'Books', 'School Supplies', 'Camping Gear']
